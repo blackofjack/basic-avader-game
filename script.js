@@ -6,6 +6,7 @@ let currentShooterIndex = 202
 let InvadersId
 let isGoingRight = true
 let direction = 1
+let results = 0
 
 
 for( let i = 0; i < width * width; i++){
@@ -94,7 +95,44 @@ function moveInvaders() {
        result.innerHTML = 'GAME OVER'
        clearInterval(InvadersId)
     }   
+
+    if (aliensRemoved.length === alienInvaders.length) {
+        result.innerHTML = 'YOU WIN'
+        clearInterval(InvadersId)
+    }
 }
 
+InvadersId = setInterval(moveInvaders, 500)
 
-InvadersId = setInterval(moveInvaders, 20)
+function shoot(e) {
+    let laserId
+    let currentLaserIndex = currentShooterIndex
+
+    function moveLaser(){
+        squares[currentLaserIndex].classList.remove('laser')
+        currentLaserIndex -= width
+        squares[currentLaserIndex].classList.add('laser')
+
+        if(squares[currentLaserIndex].classList.contains('invader')){
+           squares[currentLaserIndex].classList.remove('laser')
+           squares[currentLaserIndex].classList.remove('invader')
+           squares[currentLaserIndex].classList.add('boom')
+
+           setTimeout(() => squares[currentLaserIndex].remove('boom'), 300)
+           clearInterval(laserId)
+
+           const alienRemoved = alienInvaders.indexOf(currentLaserIndex)
+           aliensRemoved.push(alienRemoved)
+           results++
+           resultDisplay.innerHTML = results
+        }
+    }
+
+        if (e.key === 'ArrowUp') {
+           laserId =  setInterval(moveLaser, 100)
+        }
+
+}
+
+document.addEventListener('keydown', shoot)
+
